@@ -138,8 +138,9 @@ class WhatAPIExtended(whatapi.WhatAPI):
 
 # parse config file (as whatapi configparser import is incorrect for Python 3)
 def get_username_and_password(config_file):
-    config = ConfigParser()
+    config = ConfigParser(interpolation=None)
     config.read(config_file)
     username = config.get('login', 'username')
     password = config.get('login', 'password')
-    return (username, password)
+    cookies = config.get('login', 'cookies', fallback=None)
+    return (username, password, cookies)

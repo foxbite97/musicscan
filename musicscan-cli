@@ -9,9 +9,11 @@ import html
 from collections import Counter
 import os
 import re
+import http.cookies
 
 # imports: third party
 from colorama import Fore, init
+import requests
 
 # imports: custom
 import musicscan
@@ -400,8 +402,14 @@ def main():
         config_file = None
     # temporary hack: parse config file (whatapi config parser broken for python3)
     else:
-        username, password = musicscan.api.get_username_and_password(config_file)
+        username, password, raw_cookie_line = musicscan.api.get_username_and_password(config_file)
         config_file = None
+
+        # convert raw cookie line to RequestsCookieJar
+        if raw_cookie_line:
+            simple_cookie = http.cookies.SimpleCookie(raw_cookie_line)
+            cookies = requests.cookies.RequestsCookieJar()
+            cookies.update(simple_cookie)
     
     # connect to API
     print("Getting connection to API...")
